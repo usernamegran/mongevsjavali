@@ -74,9 +74,21 @@ class Stage{
 
         //TODO: evento do botão de atacar.
         //Ataque do Personagem 1
-        this.figher1El.querySelector('.attackButton').addEventListener('click', () =>this.doAttack(this.fighter1,this.fighter2));
+        this.figher1El.querySelector('.attackButton').addEventListener('click', () => {
+            if (Math.random() < 0.5) {
+                this.doAttack(this.fighter1, this.fighter2);
+            } else {
+                this.doSpecialAttack(this.fighter1, this.fighter2);
+            }
+        });
         //Ataque do Personagem 2
-        this.figher2El.querySelector('.attackButton').addEventListener('click', () =>this.doAttack(this.fighter2,this.fighter1));
+        this.figher2El.querySelector('.attackButton').addEventListener('click', () =>{
+            if (Math.random() < 0.5) {
+                this.doAttack(this.fighter2, this.fighter1);
+            } else {
+                this.doSpecialAttack(this.fighter2, this.fighter1);
+            }
+        });
     }
 
     update(){
@@ -122,6 +134,33 @@ class Stage{
             attacked.life -= actualAttack;
             this.log.addMessage(`${attacking.name} causou ${actualAttack.toFixed(2)} em ${attacked.name}`);
         }else {
+            this.log.addMessage(`${attacked.name} conseguiu defender!`);
+        }
+
+        this.update();
+    }
+    doSpecialAttack(attacking, attacked) {
+        if (attacking.life <= 0 || attacked.life <= 0) {
+            this.log.addMessage('Já era');
+            return;
+        }
+
+        let attackFactor = (Math.random() * 2).toFixed(2);
+        let defenseFactor = (Math.random() * 2).toFixed(2);
+
+        let actualAttack = attacking.attack * attackFactor;
+        let actualDefense = attacked.defense * defenseFactor;
+
+        if (Math.random() < 0.2) {
+            // Special attack occurs with 20% chance
+            actualAttack *= 2; // Double the attack power
+            this.log.addMessage(`${attacking.name} realizou um ataque especial e causou ${actualAttack.toFixed(2)} em ${attacked.name}`);
+        }
+
+        if (actualAttack > actualDefense) {
+            attacked.life -= actualAttack;
+            this.log.addMessage(`${attacking.name} causou ${actualAttack.toFixed(2)} em ${attacked.name}`);
+        } else {
             this.log.addMessage(`${attacked.name} conseguiu defender!`);
         }
 
